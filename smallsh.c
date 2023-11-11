@@ -43,9 +43,14 @@ prompt:;
       if (getenv("PS1")) fprintf(stderr, "%s", getenv("PS1"));
       else fprintf(stderr, "%s", "");
     }
+    errno = 0;
     ssize_t line_len = getline(&line, &n, input);
-    if (line_len < 0) err(1, "%s", input_fn);
-    if (feof(input)){
+
+    if (line_len < 0) {
+      //if (errno == EINVAL) exit(0);
+      //else err(1, "%s", input_fn);
+      // EOF
+      // We already check to make sure that the file exists on line 30
       exit(0);
     }
     int run_in_background = 0;
@@ -206,7 +211,6 @@ prompt:;
           break;
       }
     }
-
   }
 }
 
