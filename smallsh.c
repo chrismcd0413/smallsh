@@ -220,10 +220,13 @@ prompt:;
           // Inside parent. fork_id is child pid.
           if (!run_in_background){
             fork_id = waitpid(fork_id, &child_status, 0);
+            if (fork_id > 0) {
+              if (WIFEXITED(child_status)) last_exit_status = WEXITSTATUS(child_status);
+            }
           } else {
             background_pid = fork_id;
-
           }
+
           break;
       }
     }
