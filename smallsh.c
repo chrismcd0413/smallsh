@@ -372,10 +372,11 @@ expand(char const *word)
       build_str(string, NULL);
     } 
     else if (c == '{') {
-      size_t string_length = end - start + 1;
+      size_t string_length = end - start - 3;
       char variable[string_length + 1];
-      memcpy(variable, start, string_length);
+      memcpy(variable, start + 2, string_length);
       variable[string_length] = '\0';
+      // fprintf(stderr, "Variable Checked: %s", variable);
       if (getenv(variable)) build_str(getenv(variable), NULL);
       else build_str("", NULL);
       // build_str("<Parameter: ", NULL);
