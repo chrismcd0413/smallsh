@@ -66,13 +66,13 @@ prompt:;
       }
       if (nwords - 1 == i && !strcmp(words[i], "&")) {
          run_in_background = 1;
-         // fprintf(stderr, "Background Status %d", run_in_background);
+         fprintf(stderr, "Background Status %d", run_in_background);
       } 
      }
     /* Built in exit and cd functions */
     if (!strcmp(words[0], "exit")) {
       if (nwords == 1) exit(last_exit_status);
-      else if (nwords == 2){
+      else if (nwords == 2 || (nwords == 3 && !strcmp(words[2], "&"))){
         char *ptr;
         long exit_status;
         errno = 0;
@@ -218,9 +218,11 @@ prompt:;
           break;
         default:
           // Inside parent. fork_id is child pid.
-          if (run_in_background){
-            background_pid = fork_id;
+          if (!run_in_background){
             fork_id = waitpid(fork_id, &child_status, 0);
+          } else {
+            background_pid = fork_id;
+
           }
           break;
       }
