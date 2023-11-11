@@ -57,7 +57,7 @@ prompt:;
     char *exec_args[MAX_WORDS] = {0};
     size_t nwords = wordsplit(line);
     for (size_t i = 0; i < nwords; ++i) {
-      if (!strncmp(words[i], "$", 1)) {
+      if (strchr(words[i], '$') != NULL) {
         // fprintf(stderr, "Word %zu: %s\n", i, words[i]);
         char *exp_word = expand(words[i]);
         free(words[i]);
