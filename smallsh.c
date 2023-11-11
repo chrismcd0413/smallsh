@@ -45,7 +45,9 @@ prompt:;
     }
     ssize_t line_len = getline(&line, &n, input);
     if (line_len < 0) err(1, "%s", input_fn);
-    
+    if (feof(input)){
+      exit(0);
+    }
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
     size_t nwords = wordsplit(line);
@@ -204,6 +206,7 @@ prompt:;
           break;
       }
     }
+
   }
 }
 
