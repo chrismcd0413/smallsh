@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 
 #ifndef MAX_WORDS
 #define MAX_WORDS 512
@@ -60,7 +61,7 @@ prompt:;
          run_in_background = 1;
          // fprintf(stderr, "Background Status %d", run_in_background);
       } 
-    }
+     }
     /* Built in exit and cd functions */
     if (!strcmp(words[0], "exit")) {
       if (nwords == 1) exit(last_exit_status);
@@ -72,7 +73,10 @@ prompt:;
         if (errno == ERANGE || (errno != 0 && exit_status ==0) || ptr == words[1]) {
           fprintf(stderr, "Error with desired exit status\n");
           goto prompt;
-        } else exit(exit_status);
+        } else {
+          last_exit_status = exit_status;
+          exit(exit_status);
+        }
       }
       else {
         fprintf(stderr, "Too many arguments\n");
@@ -116,7 +120,7 @@ prompt:;
         case 0:
           // Inside the child process here fork_id is 0
           //
-          char *exec_args[MAX_WORDS] = {0};
+          char *exec_args[1] = {0};
           int arg_items = 1;
           exec_args[0] = words[0];
 
@@ -192,9 +196,11 @@ prompt:;
           if (ex_return == -1) {
             fprintf(stderr, "Execvp failure.\n");
           }
+          exit(5);
           break;
         default:
           // Inside parent. fork_id is child pid.
+          fork_id = waitpid(fork_id, &child_status, 0);
           break;
       }
     }
