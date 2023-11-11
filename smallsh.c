@@ -347,7 +347,7 @@ char *
 expand(char const *word)
 {
   char const *pos = word;
-  char *start, *end;
+  char const *start, *end;
   char c = param_scan(pos, &start, &end);
   build_str(NULL, NULL);
   build_str(pos, start);
@@ -372,8 +372,10 @@ expand(char const *word)
       build_str(string, NULL);
     } 
     else if (c == '{') {
-      char *variable;
-      memcpy(variable, start + 2, strlen(start) - 3);
+      size_t string_length = end - start + 1;
+      char variable[string_length + 1];
+      memcpy(variable, start, string_length);
+      variable[string_length] = '\0';
       if (getenv(variable)) build_str(getenv(variable), NULL);
       else build_str("", NULL);
       // build_str("<Parameter: ", NULL);
