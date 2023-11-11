@@ -122,6 +122,7 @@ prompt:;
         case -1:
           // Fork failed. Report as needed.
           fprintf(stderr, "Failed to fork process. Try again\n");
+          if (!run_in_background) last_exit_status = 1;
           exit(1);
           break;
         case 0:
@@ -137,17 +138,20 @@ prompt:;
                 int input_fd = open(words[i + 1], O_RDONLY);
                 if (input_fd == -1) {
                   fprintf(stderr, "Error opening input fd\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
                 ++i;
                 int dup_status = dup2(input_fd, 0);
                 if (dup_status == -1) {
                   fprintf(stderr, "Error redirecting to stdin\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
               }
               else {
                 fprintf(stderr, "Could not locate the desired input file\n");
+                if (!run_in_background) last_exit_status = 5;
                 exit(5);
               }
             }
@@ -156,17 +160,20 @@ prompt:;
                 int output_fd = open(words[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
                 if (output_fd == -1){
                   fprintf(stderr, "Error opening output fd\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
                 ++i;
                 int dup_status = dup2(output_fd, 1);
                 if (dup_status == -1) {
                   fprintf(stderr, "Error redirecting to stdout\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
               }
               else {
                 fprintf(stderr, "Could not locate the desired output file\n");
+                if (!run_in_background) last_exit_status = 5;
                 exit(5);
               }
             }
@@ -175,17 +182,20 @@ prompt:;
                 int output_fd = open(words[i + 1], O_WRONLY | O_CREAT, 0777);
                 if (output_fd == -1){
                   fprintf(stderr, "Error opening output fd\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
                 ++i;
                 int dup_status = dup2(output_fd, 1);
                 if (dup_status == -1) {
                   fprintf(stderr, "Error redirecting to stdout\n");
+                  if (!run_in_background) last_exit_status = 5;
                   exit(5);
                 }
               }
               else {
                 fprintf(stderr, "Could not locate the desired output file\n");
+                if (!run_in_background) last_exit_status = 5;
                 exit(5);
               }
             }
@@ -203,11 +213,15 @@ prompt:;
           if (ex_return == -1) {
             fprintf(stderr, "Execvp failure.\n");
           }
+          if (!run_in_background) last_exit_status = 5;
           exit(5);
           break;
         default:
           // Inside parent. fork_id is child pid.
-          fork_id = waitpid(fork_id, &child_status, 0);
+          if (run_in_background){
+            background_pid = fork_id;
+            fork_id = waitpid(fork_id, &child_status, 0);
+          }
           break;
       }
     }
