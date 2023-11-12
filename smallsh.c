@@ -59,6 +59,11 @@ int main(int argc, char *argv[])
   pid_t bg_pid;
   for (;;) {
 prompt:;
+      
+    // Reset words array and line
+    memset(words, 0, MAX_WORDS);
+    line = NULL;
+
     /* TODO: Manage background processes */
     
     while((bg_pid = waitpid(0, &bg_status, WUNTRACED | WNOHANG)) > 0) {
@@ -139,7 +144,7 @@ prompt:;
       }
       else {
         fprintf(stderr, "Too many arguments\n");
-        goto prompt;
+        goto prompt;(intmax_t) bg_pid
       }
     }
     else if (!strcmp(words[0], "cd")) {
