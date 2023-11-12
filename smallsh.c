@@ -64,11 +64,15 @@ prompt:;
       else fprintf(stderr, "%s", "");
     }
     errno = 0;
-    sigint_action.sa_handler = sigint_handler;
-    sigaction(SIGINT, &sigint_action, NULL);
+    if (input == stdin) {
+      sigint_action.sa_handler = sigint_handler;
+      sigaction(SIGINT, &sigint_action, NULL);
+    }
     ssize_t line_len = getline(&line, &n, input);
-    sigint_action.sa_handler = SIG_IGN;
-    sigaction(SIGINT, &sigint_action, NULL);
+    if (input == stdin) {
+      sigint_action.sa_handler = SIG_IGN;
+      sigaction(SIGINT, &sigint_action, NULL);
+    }
     if (feof(input)) {
       clearerr(input);
       errno = 0;
