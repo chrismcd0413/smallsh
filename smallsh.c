@@ -144,7 +144,7 @@ prompt:;
       }
       else {
         fprintf(stderr, "Too many arguments\n");
-        goto prompt;(intmax_t) bg_pid
+        goto prompt;
       }
     }
     else if (!strcmp(words[0], "cd")) {
