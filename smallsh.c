@@ -164,11 +164,11 @@ prompt:;
       }
     }
   /* Start the non-built in functions here. Adapted from the modules */
-    else {
+    else if (input != NULL) {
       pid_t fork_id = -2;
       int child_status;
       int child_pid;
-      fprintf(stderr, "Calling Fork");
+      // fprintf(stderr, "Calling Fork");
       fork_id = fork();
       switch (fork_id) {
         case -1:
