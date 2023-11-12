@@ -283,6 +283,7 @@ prompt:;
             }
           } else {
             background_pid = fork_id;
+            goto prompt;
           }
 
           break;
