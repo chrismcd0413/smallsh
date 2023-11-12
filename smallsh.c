@@ -271,7 +271,7 @@ prompt:;
         default:
           // Inside parent. fork_id is child pid.
           if (!run_in_background){
-            fork_id = waitpid(fork_id, &child_status, WUNTRACED);
+            fork_id = waitpid(fork_id, &child_status, WUNTRACED );
             if (fork_id > 0) {
               if (WIFEXITED(child_status)) last_exit_status = WEXITSTATUS(child_status);
               if (WIFSIGNALED(child_status)) last_exit_status = WTERMSIG(child_status) + 128;
