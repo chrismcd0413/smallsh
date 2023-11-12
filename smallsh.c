@@ -20,6 +20,9 @@ int last_exit_status = 0;
 size_t wordsplit(char const *line);
 char * expand(char const *word);
 
+void sigint_handler(int sig) {}
+
+
 int main(int argc, char *argv[])
 {
   FILE *input = stdin;
@@ -31,6 +34,21 @@ int main(int argc, char *argv[])
   } else if (argc > 2) {
     errx(1, "too many arguments");
   }
+  
+  /* Setting up signal structs */
+  struct sigaction sigint_action = {0}, sigtstp_action = {0};
+  
+  // Setup Sigint_Action
+  sigint_action.sa_handler = SIG_IGN;
+  sigfillset(&sigint_action.sa_mask);
+  sigint_action.sa_flags = 0;
+  sigaction(SIGINT, &sigint_action, NULL);
+
+  // Setup sigtstp_action
+  sigtstp_action.sa_handler = SIG_IGN;
+  sigfillset(&sigtstp_action.sa_mask);
+  sigtstp_action.sa_flags = 0;
+  sigaction(SIGTSTP, &sigtstp_action, NULL);
 
   char *line = NULL;
   size_t n = 0;
@@ -44,14 +62,15 @@ prompt:;
       else fprintf(stderr, "%s", "");
     }
     errno = 0;
+    sigint_action.sa_handler = sigint_handler;
     ssize_t line_len = getline(&line, &n, input);
-
+    sigint_action.sa_handler = SIG_IGN;
     if (line_len < 0) {
-      //if (errno == EINVAL) exit(0);
-      //else err(1, "%s", input_fn);
-      // EOF
-      // We already check to make sure that the file exists on line 30
-      exit(0);
+      clearerr(input);
+      errno = 0;
+      fprintf(stderr, "\n");
+      // Removing exit(0) may cause issues
+      goto prompt;
     }
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
