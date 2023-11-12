@@ -66,15 +66,15 @@ prompt:;
     ssize_t line_len = getline(&line, &n, input);
     sigint_action.sa_handler = SIG_IGN;
     if (line_len < 0) {
-      clearerr(input);
-      errno = 0;
-      //if (input == stdin) {
-      //fprintf(stderr, "\n");
-      // Removing exit(0) may cause issues
-      //goto prompt;
-      //}
-      //else exit(0);
-      exit(0);
+      //if (errno == EINVAL) exit(0);
+      //else err(1, "%s", input_fn);
+      // EOF
+      // We already check to make sure that the file exists on line 30
+      if (input == stdin){
+        fprintf(stderr, "\n");
+        goto prompt;
+      }
+      else exit(0);
     }
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
