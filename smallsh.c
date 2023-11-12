@@ -87,6 +87,7 @@ prompt:;
       sigaction(SIGINT, &sigint_action, NULL);
     }
     ssize_t line_len = getline(&line, &n, input);
+    if (strcmp(line, "\n")) goto prompt;
     if (input == stdin) {
       sigint_action.sa_handler = SIG_IGN;
       sigaction(SIGINT, &sigint_action, NULL);
