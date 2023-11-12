@@ -68,12 +68,13 @@ prompt:;
     if (line_len < 0) {
       clearerr(input);
       errno = 0;
-      if (input == stdin) {
-      fprintf(stderr, "\n");
+      //if (input == stdin) {
+      //fprintf(stderr, "\n");
       // Removing exit(0) may cause issues
-      goto prompt;
-      }
-      else exit(0);
+      //goto prompt;
+      //}
+      //else exit(0);
+      exit(0);
     }
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
