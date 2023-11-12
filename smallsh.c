@@ -87,7 +87,6 @@ prompt:;
       sigaction(SIGINT, &sigint_action, NULL);
     }
     ssize_t line_len = getline(&line, &n, input);
-    if (strcmp(line, "\n")) goto prompt;
     if (input == stdin) {
       sigint_action.sa_handler = SIG_IGN;
       sigaction(SIGINT, &sigint_action, NULL);
@@ -114,6 +113,7 @@ prompt:;
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
     size_t nwords = wordsplit(line);
+    if (nwords == 0) goto prompt;
     for (size_t i = 0; i < nwords; ++i) {
       if (strchr(words[i], '$') != NULL) {
         // fprintf(stderr, "Word %zu: %s\n", i, words[i]);
