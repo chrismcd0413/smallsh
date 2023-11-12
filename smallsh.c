@@ -156,7 +156,7 @@ prompt:;
               }
             }
             else if (!strcmp(words[i], ">")) {
-              if (nwords > i + 1) {
+                if (nwords > i + 1) {
                 int output_fd = open(words[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
                 if (output_fd == -1){
                   fprintf(stderr, "Error opening output fd\n");
@@ -179,7 +179,7 @@ prompt:;
             }
             else if (!strcmp(words[i], ">>")) {
               if (nwords > i + 1) {
-                int output_fd = open(words[i + 1], O_WRONLY | O_CREAT, 0777);
+                int output_fd = open(words[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0777);
                 if (output_fd == -1){
                   fprintf(stderr, "Error opening output fd\n");
                   if (!run_in_background) last_exit_status = 5;
