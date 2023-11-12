@@ -70,7 +70,7 @@ prompt:;
       if (WIFEXITED(bg_status)) fprintf(stderr, "Child process %jd done. Exit status %d.\n", (intmax_t) bg_pid, WEXITSTATUS(bg_status));
       else if (WIFSIGNALED(bg_status)) fprintf(stderr, "Child process %jd done. Signaled %d.\n", (intmax_t) bg_pid, WTERMSIG(bg_status));
       else if (WIFSTOPPED(bg_status)) {
-        fprintf(stderr, "Top.Child process %jd stopped. Continuing.\n", (intmax_t) bg_pid);
+        fprintf(stderr, "Child process %jd stopped. Continuing.\n", (intmax_t) bg_pid);
         kill(bg_pid, SIGCONT);
       }
     }
@@ -283,7 +283,7 @@ prompt:;
               if (WIFSIGNALED(child_status)) last_exit_status = WTERMSIG(child_status) + 128;
               if (WSTOPSIG(child_status)) {
                 kill(fork_id, SIGCONT);
-                fprintf(stderr, "Child process %jd stopped. Continuing\n", (intmax_t) fork_id);
+                fprintf(stderr, "Child process %jd stopped. Continuing.\n", (intmax_t) fork_id);
                 background_pid = fork_id;
               }
             }
