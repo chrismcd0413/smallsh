@@ -222,6 +222,7 @@ prompt:;
             fork_id = waitpid(fork_id, &child_status, 0);
             if (fork_id > 0) {
               if (WIFEXITED(child_status)) last_exit_status = WEXITSTATUS(child_status);
+              if (WIFSIGNALED(child_status)) last_exit_status = WTERMSIG(child_status) + 128;
             }
           } else {
             background_pid = fork_id;
