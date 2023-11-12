@@ -39,16 +39,16 @@ int main(int argc, char *argv[])
   struct sigaction sigint_action = {0}, sigtstp_action = {0};
   
   // Setup Sigint_Action
-  sigint_action.sa_handler = SIG_IGN;
+  //sigint_action.sa_handler = SIG_IGN;
   sigfillset(&sigint_action.sa_mask);
   sigint_action.sa_flags = 0;
-  sigaction(SIGINT, &sigint_action, NULL);
+  //sigaction(SIGINT, &sigint_action, NULL);
 
   // Setup sigtstp_action
-  sigtstp_action.sa_handler = SIG_IGN;
+  //sigtstp_action.sa_handler = SIG_IGN;
   sigfillset(&sigtstp_action.sa_mask);
   sigtstp_action.sa_flags = 0;
-  sigaction(SIGTSTP, &sigtstp_action, NULL);
+  //sigaction(SIGTSTP, &sigtstp_action, NULL);
 
   char *line = NULL;
   size_t n = 0;
@@ -60,6 +60,10 @@ prompt:;
     if (input == stdin) {
       if (getenv("PS1")) fprintf(stderr, "%s", getenv("PS1"));
       else fprintf(stderr, "%s", "");
+      sigint_action.sa_handler = SIG_IGN;
+      sigaction(SIGINT, &sigint_action, NULL);
+      sigtstp_action.sa_handler = SIG_IGN;
+      sigaction(SIGTSTP, &sigtstp_action, NULL);
     }
     errno = 0;
     sigint_action.sa_handler = sigint_handler;
