@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 prompt:;
     /* TODO: Manage background processes */
     
-    while((bg_pid = waitpid(-1, &bg_status, WUNTRACED | WNOHANG)) > 0) {
+    while((bg_pid = waitpid(-1, &bg_status, WUNTRACED)) > 0) {
       if (WIFEXITED(bg_status)) fprintf(stderr, "Child process %jd done. Exit status %d.\n", (intmax_t) bg_pid, WEXITSTATUS(bg_status));
       else if (WIFSIGNALED(bg_status)) fprintf(stderr, "Child process %jd done. Signaled %d.\n", (intmax_t) bg_pid, WTERMSIG(bg_status));
       else if (WIFSTOPPED(bg_status)) {
