@@ -39,16 +39,18 @@ int main(int argc, char *argv[])
   struct sigaction sigint_action = {0}, sigtstp_action = {0};
   
   // Setup Sigint_Action
-  //sigint_action.sa_handler = SIG_IGN;
-  sigfillset(&sigint_action.sa_mask);
-  sigint_action.sa_flags = 0;
-  //sigaction(SIGINT, &sigint_action, NULL);
+  if (input == stdin){
+    sigint_action.sa_handler = SIG_IGN;
+    sigfillset(&sigint_action.sa_mask);
+    sigint_action.sa_flags = 0;
+    sigaction(SIGINT, &sigint_action, NULL);
 
-  // Setup sigtstp_action
-  //sigtstp_action.sa_handler = SIG_IGN;
-  sigfillset(&sigtstp_action.sa_mask);
-  sigtstp_action.sa_flags = 0;
-  //sigaction(SIGTSTP, &sigtstp_action, NULL);
+    // Setup sigtstp_action
+    sigtstp_action.sa_handler = SIG_IGN;
+    sigfillset(&sigtstp_action.sa_mask);
+    sigtstp_action.sa_flags = 0;
+    sigaction(SIGTSTP, &sigtstp_action, NULL);
+  }
 
   char *line = NULL;
   size_t n = 0;
@@ -60,32 +62,32 @@ prompt:;
     if (input == stdin) {
       if (getenv("PS1")) fprintf(stderr, "%s", getenv("PS1"));
       else fprintf(stderr, "%s", "");
-      sigint_action.sa_handler = SIG_IGN;
-      sigaction(SIGINT, &sigint_action, NULL);
-      sigtstp_action.sa_handler = SIG_IGN;
-      sigaction(SIGTSTP, &sigtstp_action, NULL);
     }
     errno = 0;
     sigint_action.sa_handler = sigint_handler;
+    sigaction(SIGINT, &sigint_action, NULL);
     ssize_t line_len = getline(&line, &n, input);
     sigint_action.sa_handler = SIG_IGN;
+    sigaction(SIGINT, &sigint_action, NULL);
     if (feof(input)) {
       clearerr(input);
       errno = 0;
       exit(0);
     }
     if (line_len < 0) {
-      //if (errno == EINVAL) exit(0);
+      clearerr(input);
+      errno = 0;
+      //if (errno == EINVAL) fprintf(stderr, "EINVAL");
       //else err(1, "%s", input_fn);
       // EOF
       // We already check to make sure that the file exists on line 30
       if (input == stdin){
-        if (feof(input))
         fprintf(stderr, "\n");
         goto prompt;
       }
       else exit(1);
     }
+    
     int run_in_background = 0;
     char *exec_args[MAX_WORDS] = {0};
     size_t nwords = wordsplit(line);
