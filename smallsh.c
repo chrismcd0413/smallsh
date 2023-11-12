@@ -37,20 +37,20 @@ int main(int argc, char *argv[])
   }
   
   /* Setting up signal structs */
-  struct sigaction sigint_action = {0}, sigtstp_action = {0};
+  struct sigaction sigint_action = {0}, sigtstp_action = {0}, original_sigaction_int = {0}, original_sigaction_stp = {0};
   
   // Setup Sigint_Action
   if (input == stdin){
     sigint_action.sa_handler = SIG_IGN;
     sigfillset(&sigint_action.sa_mask);
     sigint_action.sa_flags = 0;
-    sigaction(SIGINT, &sigint_action, NULL);
+    sigaction(SIGINT, &sigint_action, &original_sigaction_int);
 
     // Setup sigtstp_action
     sigtstp_action.sa_handler = SIG_IGN;
     sigfillset(&sigtstp_action.sa_mask);
     sigtstp_action.sa_flags = 0;
-    sigaction(SIGTSTP, &sigtstp_action, NULL);
+    sigaction(SIGTSTP, &sigtstp_action, &original_sigaction_stp);
   }
 
   char *line = NULL;
@@ -185,7 +185,11 @@ prompt:;
           break;
         case 0:
           // Inside the child process here fork_id is 0
-          //
+          if (input == stdin) {
+            sigaction(SIGINT, &original_sigaction_int, NULL);
+            sigaction(SIGTSTP, &original_sigaction_stp, NULL);
+
+          }
           char *exec_args[1] = {0};
           int arg_items = 1;
           exec_args[0] = words[0];
