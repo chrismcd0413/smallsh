@@ -9,6 +9,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <stdint.h>
 
 #ifndef MAX_WORDS
 #define MAX_WORDS 512
@@ -54,9 +55,21 @@ int main(int argc, char *argv[])
 
   char *line = NULL;
   size_t n = 0;
+  int bg_status;
+  pid_t bg_pid;
   for (;;) {
 prompt:;
     /* TODO: Manage background processes */
+    
+    while((bg_pid = waitpid(-1, &bg_status, WUNTRACED | WNOHANG))) {
+      if (WIFEXITED(bg_status)) fprintf(stderr, "Child process %jd done. Exit status %d.\n", (intmax_t) bg_pid, WEXITSTATUS(bg_status));
+      else if (WIFSIGNALED(bg_status)) fprintf(stderr, "Child process %jd done. Signaled %d.\n", (intmax_t) bg_pid, WTERMSIG(bg_status));
+      else if (WIFSTOPPED(bg_status)) {
+        fprintf(stderr, "Child process %jd stopped. Continuing.\n", (intmax_t) bg_pid);
+        kill(bg_pid, SIGCONT);
+      }
+    }
+
 
     /* DONE! TODO: prompt */
     if (input == stdin) {
