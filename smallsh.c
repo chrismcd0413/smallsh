@@ -66,7 +66,7 @@ prompt:;
       }
       if (nwords - 1 == i && !strcmp(words[i], "&")) {
          run_in_background = 1;
-         fprintf(stderr, "Background Status %d", run_in_background);
+         // fprintf(stderr, "Background Status %d", run_in_background);
       } 
      }
     /* Built in exit and cd functions */
