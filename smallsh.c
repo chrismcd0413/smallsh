@@ -281,7 +281,7 @@ prompt:;
             if (fork_id > 0) {
               if (WIFEXITED(child_status)) last_exit_status = WEXITSTATUS(child_status);
               if (WIFSIGNALED(child_status)) last_exit_status = WTERMSIG(child_status) + 128;
-              if (WSTOPSIG(child_status)) {
+              if (WIFSTOPPED(child_status)) {
                 kill(fork_id, SIGCONT);
                 fprintf(stderr, "Child process %jd stopped. Continuing.\n", (intmax_t) fork_id);
                 background_pid = fork_id;
